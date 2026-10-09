@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment and sensitive files
+.env
+.env.local
+.env.*.local
+
+# Generated files
+/src/generated/prisma
+
+# Local IDE and agent tooling artifacts
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+.vscode/
+.idea/
+
+# OS and system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

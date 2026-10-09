@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TaskStatus {
+  Pending    @map("Pending")
+  InProgress @map("In Progress")
+  Testing    @map("Testing")
+  Completed  @map("Completed")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  createdTasks    Task[]           @relation("TaskCreator")
+  taskAssignments TaskAssignment[]
+
+  @@map("users")
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  userId      Int        @map("user_id")
+  title       String
+  description String?
+  status      TaskStatus @default(Pending)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  creator         User             @relation("TaskCreator", fields: [userId], references: [id], onDelete: Cascade)
+  taskAssignments TaskAssignment[]
+
+  @@map("tasks")
+}
+
+model TaskAssignment {
+  id     Int @id @default(autoincrement())
+  taskId Int @map("task_id")
+  userId Int @map("user_id")
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+  @@map("task_assignments")
+}
